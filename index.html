@@ -162,12 +162,13 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    align-items: flex-start;
+    justify-content: flex-end;
+    text-align: left;
     position: relative;
     overflow: hidden;
     background: var(--black);
+    padding: 0 0 8rem 5rem;
   }
 
   /* Hero background — blurred mosaic grid */
@@ -200,38 +201,43 @@
     display: block;
   }
 
-  .hero-content { position: relative; opacity: 0; transform: scale(0.95); }
+  .hero-content { position: relative; opacity: 0; transform: scale(0.95); z-index: 4; }
 
-  /* "Digital Artist" — large hero text */
-  .hero-title {
+  /* Name — bold, prominent */
+  .hero-name {
     font-family: var(--sans);
-    font-size: clamp(3rem, 10vw, 9rem);
+    font-size: clamp(2.5rem, 6vw, 5rem);
     font-weight: 800;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: var(--white-bright);
-    line-height: 1;
+    color: var(--teal-glow);
+    line-height: 1.05;
+  }
+
+  /* "Digital Artist" — refined subtitle */
+  .hero-title {
+    font-family: var(--mono);
+    font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+    font-weight: 400;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--grey-200);
+    margin-top: 1rem;
   }
   .hero-title::after {
     content: '';
     display: inline-block;
-    width: 10px; height: 10px;
+    width: 6px; height: 6px;
     background: var(--red);
     border-radius: 50%;
-    margin-left: 6px;
-    vertical-align: super;
+    margin-left: 8px;
+    vertical-align: middle;
     animation: dotPulse 2s ease-in-out infinite;
   }
 
-  /* Name — smaller, below */
+  /* Animated letter spans */
   .hero-sub {
-    font-family: var(--mono);
-    font-size: clamp(0.65rem, 1.3vw, 0.85rem);
-    font-weight: 400;
-    letter-spacing: 0.5em;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-top: 1.8rem;
+    display: none;
   }
   .hero-sub span { display: inline-block; opacity: 0; transform: translateY(15px); }
 
@@ -422,7 +428,7 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--black);
+    color: var(--teal);
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
@@ -431,7 +437,7 @@
   .about-label::before {
     content: '';
     width: 8px; height: 8px;
-    background: var(--red);
+    background: var(--teal-glow);
     border-radius: 50%;
   }
 
@@ -565,7 +571,7 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--white-bright);
+    color: var(--teal);
     display: flex;
     align-items: center;
     gap: 12px;
@@ -573,7 +579,7 @@
   .process-label::before {
     content: '';
     width: 8px; height: 8px;
-    background: var(--red);
+    background: var(--teal-glow);
     border-radius: 50%;
   }
 
@@ -811,7 +817,7 @@
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--white-bright);
+    color: var(--teal);
     display: flex;
     align-items: center;
     gap: 12px;
@@ -819,7 +825,7 @@
   .gallery-header h2::before {
     content: '';
     width: 8px; height: 8px;
-    background: var(--red);
+    background: var(--teal-glow);
     border-radius: 50%;
   }
   .gallery-header .gallery-count {
@@ -1132,7 +1138,8 @@
     .nav-links a { font-size: 7px; letter-spacing: 0.15em; }
 
     /* Hero — tighter */
-    .hero-title { font-size: clamp(2.2rem, 11vw, 4rem); letter-spacing: 0.02em; }
+    .hero { padding: 0 0 6rem 2rem; }
+    .hero-name { font-size: clamp(2rem, 8vw, 3.5rem); }
     .hero-sub { font-size: 0.6rem; letter-spacing: 0.25em; margin-top: 1rem; }
     .hero-mosaic { grid-template-columns: repeat(3, 1fr); }
 
@@ -1175,7 +1182,8 @@
 
   /* ═══ SMALL PHONES (max 380px) ═══ */
   @media (max-width: 380px) {
-    .hero-title { font-size: 2rem; }
+    .hero { padding: 0 0 5rem 1.2rem; }
+    .hero-name { font-size: clamp(1.8rem, 10vw, 2.5rem); }
     .about-label, .process-label, .gallery-header h2 { font-size: 1.3rem; }
     .nav-name { font-size: 0.7rem; }
     .nav-links a { font-size: 6px; letter-spacing: 0.1em; }
@@ -1247,10 +1255,8 @@
   </div>
 
   <div class="hero-content" id="hero-content">
+    <div class="hero-name">Zeeshan<br>Yousuf</div>
     <h1 class="hero-title">Digital Artist</h1>
-    <p class="hero-sub">
-      <span>Z</span><span>e</span><span>e</span><span>s</span><span>h</span><span>a</span><span>n</span><span>&nbsp;</span><span>&nbsp;</span><span>Y</span><span>o</span><span>u</span><span>s</span><span>u</span><span>f</span>
-    </p>
   </div>
 
   <div class="scroll-indicator" id="scroll-indicator">
@@ -1702,45 +1708,45 @@
      GALLERY — DYNAMIC GRID + WebGL OVERLAY
      ═══════════════════════════════════════ */
   const galleryData = [
-    { src: 'art/thumb/IMG_0033.JPG',      tag: 'STUDY' },
-    { src: 'art/thumb/IMG_0854.JPG',      tag: 'LANDSCAPE' },
-    { src: 'art/thumb/CD8074D9-C191-47A9-8365-CBCE714B1CFE.PNG', tag: 'ACTION' },
-    { src: 'art/thumb/IMG_0936.JPG',      tag: 'MOOD' },
-    { src: 'art/thumb/IMG_0034.JPG',      tag: 'STUDY' },
-    { src: 'art/thumb/DB25FD8D-9368-4201-8BCF-022A766BF488.PNG', tag: 'SCI-FI' },
-    { src: 'art/thumb/IMG_0822.JPG',      tag: 'CHARACTER' },
-    { src: 'art/thumb/951C8DF5-A609-4CDC-9A8F-85BA8490475E.PNG', tag: 'SURREAL' },
-    { src: 'art/thumb/IMG_0085.JPG',      tag: 'ILLUSTRATION' },
-    { src: 'art/thumb/IMG_0092.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0946.JPG',      tag: 'PORTRAIT' },
     { src: 'art/thumb/dither-ascii-pro-1775751849948.PNG', tag: 'PIXEL' },
-    { src: 'art/thumb/IMG_0035.JPG',      tag: 'STUDY' },
+    { src: 'art/thumb/IMG_0698.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/DB25FD8D-9368-4201-8BCF-022A766BF488.PNG', tag: 'SCI-FI' },
+    { src: 'art/thumb/IMG_0085.JPG',      tag: 'ILLUSTRATION' },
+    { src: 'art/thumb/IMG_0876.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/CD8074D9-C191-47A9-8365-CBCE714B1CFE.PNG', tag: 'ACTION' },
+    { src: 'art/thumb/IMG_0033.JPG',      tag: 'STUDY' },
+    { src: 'art/thumb/IMG_1100.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0854.JPG',      tag: 'LANDSCAPE' },
+    { src: 'art/thumb/42A0D907-FBC0-4F96-8BEB-83F34E163953.JPG', tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0936.JPG',      tag: 'MOOD' },
+    { src: 'art/thumb/951C8DF5-A609-4CDC-9A8F-85BA8490475E.PNG', tag: 'SURREAL' },
+    { src: 'art/thumb/IMG_0737.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0822.JPG',      tag: 'CHARACTER' },
     { src: 'art/thumb/IMG_0674.JPG',      tag: 'DIGITAL' },
     { src: 'art/thumb/C835960D-2ACC-4F04-92C7-AF3D52EEFF88.PNG', tag: 'DARK' },
-    { src: 'art/thumb/IMG_0036.JPG',      tag: 'STUDY' },
-    { src: 'art/thumb/IMG_0698.JPG',      tag: 'DIGITAL' },
-    { src: 'art/thumb/IMG_0737.JPG',      tag: 'DIGITAL' },
-    { src: 'art/thumb/IMG_0748.jpg',      tag: 'DIGITAL' },
-    { src: 'art/thumb/IMG_0796.JPG',      tag: 'DIGITAL' },
-    { src: 'art/thumb/36B1C79E-E486-40AB-AB5B-629AF48C88CF.JPG', tag: 'DIGITAL' },
-    { src: 'art/thumb/IMG_0813.JPG',      tag: 'DIGITAL' },
-    { src: 'art/thumb/IMG_0825.JPG',      tag: 'DIGITAL' },
-    { src: 'art/thumb/04552F57-EA33-4AF2-944F-E7F402B35DE0.JPG', tag: 'PORTRAIT' },
-    { src: 'art/thumb/IMG_0828.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0034.JPG',      tag: 'STUDY' },
     { src: 'art/thumb/IMG_0839.JPG',      tag: 'DIGITAL' },
-    { src: 'art/thumb/08AED523-A76F-440B-83DE-D0EAFF1AC1CD.jpg', tag: 'DIGITAL' },
-    { src: 'art/thumb/IMG_0111.JPG',      tag: 'DIGITAL' },
-    { src: 'art/thumb/42A0D907-FBC0-4F96-8BEB-83F34E163953.JPG', tag: 'DIGITAL' },
-    { src: 'art/thumb/IMG_0688.JPG',      tag: 'DIGITAL' },
-    { src: 'art/thumb/IMG_0745.JPG',      tag: 'DIGITAL' },
-    { src: 'art/thumb/IMG_0876.JPG',      tag: 'DIGITAL' },
-    { src: 'art/thumb/IMG_0946.JPG',      tag: 'PORTRAIT' },
-    { src: 'art/thumb/IMG_0885.JPG',      tag: 'DIGITAL' },
-    { src: 'art/thumb/D6AE28B5-F0F9-4AD2-AED9-6384D5E100D8.JPG', tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0796.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/04552F57-EA33-4AF2-944F-E7F402B35DE0.JPG', tag: 'PORTRAIT' },
+    { src: 'art/thumb/IMG_0092.JPG',      tag: 'DIGITAL' },
     { src: 'art/thumb/IMG_0915.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0035.JPG',      tag: 'STUDY' },
+    { src: 'art/thumb/IMG_0813.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/36B1C79E-E486-40AB-AB5B-629AF48C88CF.JPG', tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0748.jpg',      tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0885.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0111.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/08AED523-A76F-440B-83DE-D0EAFF1AC1CD.jpg', tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0036.JPG',      tag: 'STUDY' },
+    { src: 'art/thumb/IMG_0825.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0745.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0688.JPG',      tag: 'DIGITAL' },
+    { src: 'art/thumb/D6AE28B5-F0F9-4AD2-AED9-6384D5E100D8.JPG', tag: 'DIGITAL' },
+    { src: 'art/thumb/IMG_0828.JPG',      tag: 'DIGITAL' },
     { src: 'art/thumb/0ED776FC-C298-4793-B859-D0CDA6E0F215.JPG', tag: 'DIGITAL' },
     { src: 'art/thumb/IMG_0929.PNG',      tag: 'DIGITAL' },
     { src: 'art/thumb/IMG_1096.JPG',      tag: 'DIGITAL' },
-    { src: 'art/thumb/IMG_1100.JPG',      tag: 'DIGITAL' },
   ];
 
   const galleryGrid = document.getElementById('gallery-grid');
@@ -1912,9 +1918,12 @@
   revealTL.to(flash, { opacity: 1, duration: 0.15, ease: 'power4.in' }, 0.1);
   revealTL.to(flash, { opacity: 0, duration: 1.5, ease: 'power2.out' }, 0.25);
   revealTL.to(heroContent, { opacity: 1, scale: 1, duration: 1.2, ease: 'power3.out' }, 0.3);
-  revealTL.to('.hero-sub span', {
-    opacity: 1, y: 0, stagger: 0.04, duration: 0.5, ease: 'power3.out',
-  }, 0.6);
+  revealTL.from('.hero-name', {
+    opacity: 0, x: -30, duration: 1, ease: 'power3.out',
+  }, 0.5);
+  revealTL.from('.hero-title', {
+    opacity: 0, y: 10, duration: 0.8, ease: 'power3.out',
+  }, 0.8);
   revealTL.to('.hero-glyph-tl, .hero-glyph-tr, .hero-glyph-bl, .hero-glyph-br', {
     opacity: 1, stagger: 0.1, duration: 1, ease: 'power2.out',
   }, 0.8);
