@@ -1,0 +1,17 @@
+# Full-res originals (not used by the site)
+art/*.JPG
+art/*.jpg
+art/*.PNG
+art/*.png
+
+# Generated intermediate sizes (not used by the site)
+art/hero/
+art/micro/
+art/micro-about/
+
+# Full-res phase originals
+phases/*.JPG
+phases/thumb/
+
+# OS files
+.DS_Store
