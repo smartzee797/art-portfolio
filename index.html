@@ -29,7 +29,7 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { overflow-x: hidden; scroll-behavior: smooth; }
+  html { overflow-x: hidden; }
 
   body {
     background: var(--black);
@@ -837,14 +837,12 @@
 
   /* WebGL gallery canvas */
   #gallery-canvas {
-    position: relative;
-    z-index: 2;
+    position: absolute;
+    top: 0; left: 0;
     width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    display: block;
-    border-radius: 4px;
-    border: 1px solid var(--grey-700);
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
   }
 
   /* Gallery grid — CSS columns masonry */
@@ -1677,6 +1675,17 @@
   animate();
 
   /* ═══════════════════════════════════════
+     SMOOTH SCROLL FOR NAV LINKS
+     ═══════════════════════════════════════ */
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  /* ═══════════════════════════════════════
      NAVBAR — HIDE ON SCROLL DOWN, SHOW ON SCROLL UP
      ═══════════════════════════════════════ */
   const navbar = document.getElementById('navbar');
@@ -1816,59 +1825,82 @@
   const galCtx = galCanvas.getContext('2d');
   const galSection = document.querySelector('.gallery');
 
+  // Size canvas to full gallery section background
   function resizeGalCanvas() {
-    const rect = galleryGrid.getBoundingClientRect();
-    galCanvas.width = rect.width;
-    galCanvas.height = rect.height;
-    galCanvas.style.width = rect.width + 'px';
-    galCanvas.style.height = rect.height + 'px';
+    const section = document.querySelector('.gallery');
+    galCanvas.width = section.offsetWidth;
+    galCanvas.height = section.offsetHeight;
+    galCanvas.style.width = '100%';
+    galCanvas.style.height = '100%';
     galCanvas.style.position = 'absolute';
-    galCanvas.style.left = galleryGrid.offsetLeft + 'px';
-    galCanvas.style.top = galleryGrid.offsetTop + 'px';
+    galCanvas.style.top = '0';
+    galCanvas.style.left = '0';
     galCanvas.style.pointerEvents = 'none';
-    galCanvas.style.zIndex = '3';
+    galCanvas.style.zIndex = '1';
     galCanvas.style.border = 'none';
   }
 
-  // Floating particles over gallery
+  // Particles across the entire gallery section background
   const galParticles = [];
-  for (let i = 0; i < 60; i++) {
+  const GAL_PARTICLE_COUNT = 100;
+  for (let i = 0; i < GAL_PARTICLE_COUNT; i++) {
     galParticles.push({
       x: Math.random(),
       y: Math.random(),
-      vx: (Math.random() - 0.5) * 0.0005,
-      vy: (Math.random() - 0.5) * 0.0005,
-      size: 1 + Math.random() * 2,
-      alpha: 0.1 + Math.random() * 0.25,
+      vx: (Math.random() - 0.5) * 0.0003,
+      vy: (Math.random() - 0.5) * 0.0003,
+      size: 1 + Math.random() * 2.5,
+      baseAlpha: 0.08 + Math.random() * 0.2,
+      phase: Math.random() * Math.PI * 2,
+      pulseSpeed: 0.3 + Math.random() * 0.7,
     });
   }
 
   let galTime = 0;
   function animateGalleryCanvas() {
     requestAnimationFrame(animateGalleryCanvas);
-    galTime += 0.01;
+    galTime += 0.008;
 
     if (galCanvas.width === 0) return;
     galCtx.clearRect(0, 0, galCanvas.width, galCanvas.height);
 
+    // Global breathing pulse
+    const breathe = 0.6 + 0.4 * Math.sin(galTime * 0.5);
+
     galParticles.forEach(p => {
-      p.x += p.vx + Math.sin(galTime + p.y * 10) * 0.0002;
-      p.y += p.vy + Math.cos(galTime + p.x * 10) * 0.0002;
-      if (p.x < 0) p.x = 1;
-      if (p.x > 1) p.x = 0;
-      if (p.y < 0) p.y = 1;
-      if (p.y > 1) p.y = 0;
+      // Drift
+      p.x += p.vx + Math.sin(galTime * 0.7 + p.phase) * 0.00015;
+      p.y += p.vy + Math.cos(galTime * 0.5 + p.phase) * 0.00015;
+      if (p.x < -0.02) p.x = 1.02;
+      if (p.x > 1.02) p.x = -0.02;
+      if (p.y < -0.02) p.y = 1.02;
+      if (p.y > 1.02) p.y = -0.02;
+
+      // Individual pulse
+      const pulse = 0.5 + 0.5 * Math.sin(galTime * p.pulseSpeed + p.phase);
+      const alpha = p.baseAlpha * breathe * (0.4 + 0.6 * pulse);
 
       const px = p.x * galCanvas.width;
       const py = p.y * galCanvas.height;
 
+      // Glow effect — larger soft circle behind
+      const glowSize = p.size * 4;
+      const glowGrad = galCtx.createRadialGradient(px, py, 0, px, py, glowSize);
+      glowGrad.addColorStop(0, `rgba(20, 184, 184, ${alpha * 0.4})`);
+      glowGrad.addColorStop(1, 'rgba(20, 184, 184, 0)');
       galCtx.beginPath();
-      galCtx.arc(px, py, p.size, 0, Math.PI * 2);
-      galCtx.fillStyle = `rgba(20, 184, 184, ${p.alpha})`;
+      galCtx.arc(px, py, glowSize, 0, Math.PI * 2);
+      galCtx.fillStyle = glowGrad;
+      galCtx.fill();
+
+      // Core dot
+      galCtx.beginPath();
+      galCtx.arc(px, py, p.size * (0.7 + 0.3 * pulse), 0, Math.PI * 2);
+      galCtx.fillStyle = `rgba(20, 184, 184, ${alpha})`;
       galCtx.fill();
     });
 
-    // Draw subtle connecting lines between nearby particles
+    // Connecting lines between nearby particles
     for (let i = 0; i < galParticles.length; i++) {
       for (let j = i + 1; j < galParticles.length; j++) {
         const a = galParticles[i];
@@ -1876,24 +1908,25 @@
         const dx = (a.x - b.x) * galCanvas.width;
         const dy = (a.y - b.y) * galCanvas.height;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 80) {
+        if (dist < 120) {
+          const lineAlpha = 0.06 * (1 - dist / 120) * breathe;
           galCtx.beginPath();
           galCtx.moveTo(a.x * galCanvas.width, a.y * galCanvas.height);
           galCtx.lineTo(b.x * galCanvas.width, b.y * galCanvas.height);
-          galCtx.strokeStyle = `rgba(13, 115, 119, ${0.08 * (1 - dist / 80)})`;
-          galCtx.lineWidth = 0.5;
+          galCtx.strokeStyle = `rgba(13, 115, 119, ${lineAlpha})`;
+          galCtx.lineWidth = 0.6;
           galCtx.stroke();
         }
       }
     }
   }
 
-  // Delay gallery canvas setup until layout is ready
+  // Delay canvas setup until layout is ready
   setTimeout(() => {
     resizeGalCanvas();
     animateGalleryCanvas();
-  }, 100);
-  window.addEventListener('resize', () => setTimeout(resizeGalCanvas, 100));
+  }, 200);
+  window.addEventListener('resize', () => setTimeout(resizeGalCanvas, 150));
 
   /* ═══════════════════════════════════════
      GSAP SETUP
