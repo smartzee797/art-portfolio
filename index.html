@@ -890,6 +890,16 @@
     opacity: 1;
     transform: translateY(0);
   }
+  /* Touch devices — always show overlay */
+  @media (hover: none) {
+    .gallery-item-overlay {
+      opacity: 1;
+      transform: translateY(0);
+      padding: 0.4rem 0.5rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+    }
+    .gallery-item::after { display: none; }
+  }
 
   .gallery-item-meta {
     display: flex;
@@ -998,36 +1008,92 @@
   }
 
   /* ═══ RESPONSIVE ═══ */
+  /* ═══ TABLET (max 900px) ═══ */
   @media (max-width: 900px) {
     .about-split {
       flex-direction: column-reverse;
-      gap: 3rem;
+      gap: 2.5rem;
     }
     .about-left { width: 100%; }
-    .portrait-frame { width: 220px; height: 280px; }
+    .about-right { align-items: center; text-align: center; }
+    .portrait-frame { width: 200px; height: 260px; }
+    .about-text { font-size: 1rem; }
+    .process { padding: 4rem 1.5rem 3rem; }
     .process-body { flex-direction: column; gap: 1.5rem; }
     .process-selectors { flex-direction: row; width: 100%; justify-content: center; }
     .process-selector { flex-direction: row; padding: 6px 12px; }
     .selector-thumb { width: 40px; height: 40px; }
     .phase-arrow { display: none; }
+    .gallery { padding: 5rem 1.5rem 3rem; }
     .gallery-grid { column-count: 3; }
     .navbar { padding: 0 1.5rem; }
     .nav-links { gap: 1.5rem; }
     .hero-mosaic { grid-template-columns: repeat(4, 1fr); }
   }
+
+  /* ═══ MOBILE (max 600px) ═══ */
   @media (max-width: 600px) {
+    /* Hide desktop-only elements */
     .hero-glyph-tl, .hero-glyph-tr, .hero-glyph-bl, .hero-glyph-br { display: none; }
     .cursor-dot, .cursor-ring { display: none; }
     body { cursor: auto; }
-    .navbar { padding: 0 1rem; height: 56px; }
-    .nav-links { gap: 1rem; }
-    .nav-links a { font-size: 8px; letter-spacing: 0.2em; }
-    .phase-row.active { flex-wrap: wrap; }
-    .phase-card { flex: 0 0 calc(33.33% - 8px); }
-    .gallery-grid { column-count: 2; column-gap: 8px; }
-    .gallery-item { margin-bottom: 8px; }
-    .footer { flex-direction: column; text-align: center; gap: 0.8rem; }
+
+    /* Navbar — compact */
+    .navbar { padding: 0 1rem; height: 50px; }
+    .nav-name { font-size: 0.8rem; letter-spacing: 0.05em; }
+    .nav-links { gap: 0.8rem; }
+    .nav-links a { font-size: 7px; letter-spacing: 0.15em; }
+
+    /* Hero — tighter */
+    .hero-title { font-size: clamp(2rem, 10vw, 3.5rem); letter-spacing: 0.03em; }
+    .hero-sub { font-size: 0.6rem; letter-spacing: 0.25em; margin-top: 1rem; }
     .hero-mosaic { grid-template-columns: repeat(3, 1fr); }
+
+    /* About — single column, readable */
+    .about { padding: 6rem 1.2rem 4rem; }
+    .about-split { gap: 2rem; }
+    .about-art-grid { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+    .about-right { align-items: center; text-align: center; }
+    .portrait-frame { width: 180px; height: 230px; }
+    .about-text { font-size: 0.9rem; line-height: 1.7; }
+    .about-label { justify-content: center; }
+
+    /* Process — stacked */
+    .process { padding: 3.5rem 1rem 2.5rem; }
+    .process-header { margin-bottom: 1.5rem; }
+    .process-selectors { gap: 0.5rem; }
+    .process-selector { padding: 5px 8px; }
+    .selector-thumb { width: 32px; height: 32px; }
+    .selector-name { font-size: 7px; }
+    .phase-row.active { flex-wrap: wrap; gap: 8px; }
+    .phase-card { flex: 0 0 calc(33.33% - 6px); }
+    .phase-num { font-size: 7px; top: 4px; left: 4px; padding: 1px 4px; }
+    .phase-label { font-size: 6px; bottom: 4px; left: 4px; padding: 1px 4px; }
+
+    /* Gallery — 2 columns */
+    .gallery { padding: 3.5rem 0.8rem 2rem; }
+    .gallery-grid { column-count: 2; column-gap: 6px; }
+    .gallery-item { margin-bottom: 6px; border-radius: 3px; }
+    .gallery-item-overlay { padding: 0.4rem 0.5rem; }
+    .gallery-item-num { font-size: 7px; }
+    .gallery-item-tag { font-size: 6px; padding: 1px 4px; }
+
+    /* Footer — stack */
+    .footer { flex-direction: column; text-align: center; gap: 0.6rem; padding: 1rem; }
+    .footer-copy { font-size: 8px; }
+    .social-links a { width: 32px; height: 32px; }
+    .social-links a svg { width: 14px; height: 14px; }
+  }
+
+  /* ═══ SMALL PHONES (max 380px) ═══ */
+  @media (max-width: 380px) {
+    .hero-title { font-size: 1.8rem; }
+    .nav-name { font-size: 0.7rem; }
+    .nav-links a { font-size: 6px; letter-spacing: 0.1em; }
+    .about-art-grid { grid-template-columns: repeat(2, 1fr); }
+    .phase-card { flex: 0 0 calc(50% - 5px); }
+    .gallery-grid { column-count: 1; }
+    .process-selectors { flex-wrap: wrap; }
   }
 </style>
 </head>
